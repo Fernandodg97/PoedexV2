@@ -1,165 +1,150 @@
 package mp3.dam.elpuig.pokedex.control;
 
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.Scene;
-import javafx.scene.chart.*;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import mp3.dam.elpuig.pokedex.connection.PokeAPIConnection;
 import mp3.dam.elpuig.pokedex.model.Pokemon;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
-import java.net.URL;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.ArrayList;
 
-public class MainWindow implements Initializable {
-    private Scene scene;
-    private Stage stage;
-    private PokeAPIConnection pokeAPIConnection;
+public class MainWindow {
 
-    private BarChart<String, Number> barChart;
-    private PieChart pieChart;
-    final CategoryAxis xAxis = new CategoryAxis();
-    final NumberAxis yAxis = new NumberAxis();
-    private List<Pokemon> pokemons;
+    private JFrame frame;
+    private JList<String> pokemonList;
+    private JTextArea resultArea;
+    private JLabel imageLabel;
+    private DefaultListModel<String> pokemonListModel;
+    private List<Pokemon> allPokemons = new ArrayList<>();
 
-    @FXML
-    HBox hBox0;
-    @FXML
-    VBox vBox0;
-    @FXML
-    ComboBox<String> cmbComarca;
-
-    // Nuevos elementos para mostrar los detalles del Pokémon
-    @FXML
-    private Label lblPokemonName;
-    @FXML
-    private Label lblPokemonId;
-    @FXML
-    private Label lblPokemonSpecies;
-    @FXML
-    private Label lblPokemonHeight;
-    @FXML
-    private Label lblPokemonWeight;
-    @FXML
-    private ImageView ivPokemonImage;
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        System.out.printf("init %s%n", url.toString());
-        pokeAPIConnection = new PokeAPIConnection();  // Inicializamos la conexión con la API
-
-        // Add a listener to the ComboBox to update the BarChart based on the selected category
-        cmbComarca.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                updateBarChart(newValue);
-            }
-        });
+    public MainWindow() {
+        initialize();
     }
 
-    public void setStage(Stage primaryStage) {
-        stage = primaryStage;
+    // Método para inicializar la ventana principal
+    private void initialize() {
+        // Crear la ventana principal
+        frame = new JFrame("Pokedex");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(800, 600);
+        frame.setLayout(new BorderLayout());
+
+        // Panel para contener la lista de Pokémon y la información
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+
+        // Crear el modelo y la lista de Pokémon (por nombre)
+        pokemonListModel = new DefaultListModel<>();
+        pokemonList = new JList<>(pokemonListModel);
+        pokemonList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        pokemonList.addListSelectionListener(e -> onPokemonSelected());
+
+        // Agregar un JScrollPane para la lista
+        JScrollPane listScrollPane = new JScrollPane(pokemonList);
+        mainPanel.add(listScrollPane, BorderLayout.WEST);
+
+        // Crear área de texto para mostrar los resultados
+        resultArea = new JTextArea();
+        resultArea.setEditable(false);
+        JScrollPane resultScrollPane = new JScrollPane(resultArea);
+
+        // Etiqueta para mostrar la imagen del Pokémon
+        imageLabel = new JLabel();
+        mainPanel.add(resultScrollPane, BorderLayout.CENTER);
+        mainPanel.add(imageLabel, BorderLayout.SOUTH);
+
+        frame.add(mainPanel, BorderLayout.CENTER);
+
+        // Hacer visible la ventana
+        frame.setVisible(true);
+
+        // Cargar la lista de todos los Pokémon
+        loadPokemonList();
     }
 
-    public void setScene(Scene scene) {
-        this.scene = scene;
-    }
-
-    public void clickMenuItemLoad(ActionEvent actionEvent) {
-        // Realizamos una consulta a la API para obtener los Pokémon
+    // Método para cargar la lista de Pokémon
+    private void loadPokemonList() {
         try {
-            pokemons = pokeAPIConnection.getPokemons();
+            // Obtener el número total de Pokémon disponibles
+            int totalPokemons = PokeAPIConnection.getTotalPokemons(); // Asume que esta función existe y devuelve el total
 
-            // Poblemos el ComboBox con los nombres de los Pokémon
-            Set<String> pokemonNames = pokemons.stream()
-                    .map(Pokemon::getName) // Obtener los nombres de los Pokémon
-                    .collect(Collectors.toSet());
+            System.out.println("Iniciando la carga de " + totalPokemons + " Pokémon...");
+            for (int i = 1; i <= totalPokemons; i++) {
+                try {
+                    System.out.println("Intentando obtener el Pokémon con ID: " + i);
+                    Pokemon pokemon = PokeAPIConnection.getPokemonById(i); // Método para obtener Pokémon por ID
 
-            cmbComarca.getItems().clear();
-            cmbComarca.getItems().addAll(pokemonNames);
+                    // Imprimir el Pokémon antes de agregarlo
+                    System.out.println("Cargando Pokémon: " + pokemon.getName());
+                    System.out.println(pokemon);
 
-            // Creamos el gráfico de barras
-            barChart = new BarChart<>(xAxis, yAxis);
-            barChart.setTitle("Cantidad de Pokémon por Tipo");
-            xAxis.setLabel("Tipo");
-            yAxis.setLabel("Cantidad");
+                    allPokemons.add(pokemon);
+                    pokemonListModel.addElement(pokemon.getName());  // Agregar el nombre del Pokémon a la lista
+                    System.out.println("Pokémon agregado correctamente: " + pokemon.getName());
 
-            updateBarChart(pokemonNames.iterator().next());  // Actualizamos el gráfico con el primer Pokémon disponible
-            barChart.setPrefWidth(780);
-            vBox0.getChildren().add(barChart);
-
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void clickMenuItemClose(ActionEvent actionEvent) {
-        stage.close();
-    }
-
-    private void updateBarChart(String selectedPokemonName) {
-        barChart.getData().clear();
-
-        // Contamos cuántos Pokémon de cada tipo existen
-        Map<String, Long> categoryCount = pokemons.stream()
-                .flatMap(pokemon -> pokemon.getTypes().stream())  // Aplana la lista de tipos de cada Pokémon
-                .map(type -> type.getName()) // Accede al nombre del tipo (ya que 'type' es un objeto de la clase 'Type')
-                .collect(Collectors.groupingBy(type -> type, Collectors.counting())); // Agrupa por nombre de tipo y cuenta las ocurrencias
-
-
-        for (Map.Entry<String, Long> entry : categoryCount.entrySet()) {
-            XYChart.Series<String, Number> series = new XYChart.Series<>();
-            series.setName(entry.getKey());
-            series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
-            barChart.getData().add(series);
-        }
-    }
-
-    // Método para mostrar los detalles del Pokémon
-    private void displayPokemonDetails(String pokemonName) {
-        try {
-            // Obtener el Pokémon por su nombre desde la API
-            Pokemon pokemon = pokeAPIConnection.getPokemon(pokemonName);
-            if (pokemon != null) {
-                // Actualizar la interfaz con los detalles del Pokémon
-                lblPokemonName.setText("Pokémon: " + pokemon.getName());
-                lblPokemonId.setText("ID: " + pokemon.getId());
-                lblPokemonSpecies.setText("Especie: " + pokemon.getSpecies());
-                lblPokemonHeight.setText("Altura: " + pokemon.getHeight() + " m");
-                lblPokemonWeight.setText("Peso: " + pokemon.getWeight() + " kg");
-
-                // Cargar la imagen del Pokémon, si está disponible
-                String imageUrl = pokemon.getSprites().getFront_default();
-                if (imageUrl != null && !imageUrl.isEmpty()) {
-                    Image image = new Image(imageUrl);
-                    ivPokemonImage.setImage(image);
-                } else {
-                    ivPokemonImage.setImage(null);  // Si no hay imagen, asegurarse de que no se muestre nada
+                } catch (IOException e) {
+                    System.out.println("Error al obtener el Pokémon con ID: " + i);  // Mejor manejo de error si algo falla
+                    e.printStackTrace();  // Imprimir detalles del error
                 }
             }
-        } catch (IOException | InterruptedException e) {
+            System.out.println("Carga de Pokémon completada.");
+        } catch (Exception e) {
+            System.out.println("Error general al cargar los Pokémon: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    // Método que se llama cuando se selecciona un Pokémon desde el ComboBox
-    @FXML
-    public void onPokemonSelected(ActionEvent event) {
-        String selectedPokemon = cmbComarca.getValue();
-        if (selectedPokemon != null) {
-            displayPokemonDetails(selectedPokemon);
+    // Método que se ejecuta cuando un Pokémon es seleccionado en la lista
+    private void onPokemonSelected() {
+        String selectedPokemonName = pokemonList.getSelectedValue();
+        if (selectedPokemonName != null) {
+            // Buscar el Pokémon correspondiente en la lista
+            Pokemon selectedPokemon = getPokemonByName(selectedPokemonName);
+
+            if (selectedPokemon != null) {
+                // Mostrar los detalles del Pokémon
+                StringBuilder resultText = new StringBuilder();
+                resultText.append("ID: ").append(selectedPokemon.getId()).append("\n");
+                resultText.append("Nombre: ").append(selectedPokemon.getName()).append("\n");
+
+                // Mostrar los tipos del Pokémon
+                resultText.append("Tipos: ");
+                for (String type : selectedPokemon.getTypes()) {
+                    resultText.append(type).append(" ");
+                }
+                resultText.append("\n");
+
+                // Mostrar las estadísticas del Pokémon
+                resultText.append("HP: ").append(selectedPokemon.getHp()).append("\n");
+                resultText.append("Ataque: ").append(selectedPokemon.getAttack()).append("\n");
+                resultText.append("Defensa: ").append(selectedPokemon.getDefense()).append("\n");
+                resultText.append("Ataque Especial: ").append(selectedPokemon.getSpecialAttack()).append("\n");
+                resultText.append("Defensa Especial: ").append(selectedPokemon.getSpecialDefense()).append("\n");
+                resultText.append("Velocidad: ").append(selectedPokemon.getSpeed()).append("\n");
+
+                // Mostrar la imagen del Pokémon
+                ImageIcon pokemonImage = new ImageIcon(selectedPokemon.getImageUrl());
+                imageLabel.setIcon(pokemonImage);
+
+                // Actualizar el área de texto con la información del Pokémon
+                resultArea.setText(resultText.toString());
+            }
         }
     }
 
-    public void setPokeAPIConnection(PokeAPIConnection pokeAPIConnection) {
-        this.pokeAPIConnection = pokeAPIConnection;
+    // Método para buscar un Pokémon por su nombre
+    private Pokemon getPokemonByName(String name) {
+        for (Pokemon pokemon : allPokemons) {
+            if (pokemon.getName().equalsIgnoreCase(name)) {
+                return pokemon;
+            }
+        }
+        return null;
+    }
+
+    // Método principal para ejecutar la ventana
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(MainWindow::new);
     }
 }

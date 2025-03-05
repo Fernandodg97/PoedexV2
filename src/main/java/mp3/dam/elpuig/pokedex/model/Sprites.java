@@ -1,19 +1,38 @@
 package mp3.dam.elpuig.pokedex.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Sprites {
-    private String front_default;  // URL de la imagen del Pokémon
+    private String frontDefault;  // Imagen frontal por defecto
+    private String frontShiny;    // Imagen frontal shiny (si existe)
 
-    // Constructor
-    public Sprites(String front_default) {
-        this.front_default = front_default;
+
+    // Constructor vacío
+    public Sprites() {}
+
+    // Getters y Setters
+    public String getFrontDefault() {
+        return frontDefault;
     }
 
-    // Getter y setter
-    public String getFront_default() {
-        return front_default;
+    public void setFrontDefault(String frontDefault) {
+        this.frontDefault = frontDefault;
     }
 
-    public void setFront_default(String front_default) {
-        this.front_default = front_default;
+    public String getFrontShiny() {
+        return frontShiny;
+    }
+
+    public void setFrontShiny(String frontShiny) {
+        this.frontShiny = frontShiny;
+    }
+
+    @Override
+    public String toString() {
+        return "Sprites{" +
+                "frontDefault='" + frontDefault + '\'' +
+                ", frontShiny='" + frontShiny + '\'' +
+                '}';
     }
 }

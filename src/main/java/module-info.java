@@ -4,6 +4,7 @@ module mp3.dam.elpuig.pokedex {
     requires java.xml.bind;
     requires java.net.http;
     requires com.fasterxml.jackson.databind;
+    requires java.desktop;
 
     opens mp3.dam.elpuig.pokedex.fxml to javafx.fxml;
     opens mp3.dam.elpuig.pokedex.control to javafx.fxml;

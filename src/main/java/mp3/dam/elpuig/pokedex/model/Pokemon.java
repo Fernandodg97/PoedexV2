@@ -1,35 +1,34 @@
 package mp3.dam.elpuig.pokedex.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.ArrayList;
 import java.util.List;
 
-@JsonIgnoreProperties(ignoreUnknown = true) // Ignorar campos no definidos en la clase
+//@JsonIgnoreProperties(ignoreUnknown = true)
 public class Pokemon {
-
-    private String name;
     private int id;
-    private Species species;
-    private double height;
-    private double weight;
-    private List<Type> types;  // Lista de tipos (cada tipo con un nombre)
-    private Sprites sprites;
+    private String name;
+    private List<String> types = new ArrayList<>();
+    private int hp;
+    private int attack;
+    private int defense;
+    private int specialAttack;
+    private int specialDefense;
+    private int speed;
+    private String imageUrl;
 
-    // Constructor vacío para Jackson
+    // Constructor vacío
     public Pokemon() {}
 
-    // Constructor con parámetros
-    public Pokemon(String name, int id, Species species, double height, double weight, List<Type> types, Sprites sprites) {
-        this.name = name;
-        this.id = id;
-        this.species = species;
-        this.height = height;
-        this.weight = weight;
-        this.types = types;
-        this.sprites = sprites;
+    // Getters y Setters
+    public int getId() {
+        return id;
     }
 
-    // Getters y Setters
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -39,69 +38,87 @@ public class Pokemon {
         this.name = name;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public Species getSpecies() {
-        return species;
-    }
-
-    public void setSpecies(Species species) {
-        this.species = species;
-    }
-
-    public double getHeight() {
-        return height;
-    }
-
-    public void setHeight(double height) {
-        this.height = height;
-    }
-
-    public double getWeight() {
-        return weight;
-    }
-
-    public void setWeight(double weight) {
-        this.weight = weight;
-    }
-
-    public List<Type> getTypes() {
+    public List<String> getTypes() {
         return types;
     }
 
-    public void setTypes(List<Type> types) {
+    public void setTypes(List<String> types) {
         this.types = types;
     }
 
-    public Sprites getSprites() {
-        return sprites;
+    public void addType(String type) {
+        this.types.add(type);
     }
 
-    public void setSprites(Sprites sprites) {
-        this.sprites = sprites;
+    public int getHp() {
+        return hp;
     }
 
-    // Método adicional para crear un objeto Pokemon desde la respuesta de la API
-    public static Pokemon fromApiResponse(String name, int id, Species species, double height, double weight, List<Type> types, Sprites sprites) {
-        return new Pokemon(name, id, species, height, weight, types, sprites);
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
+    public int getAttack() {
+        return attack;
+    }
+
+    public void setAttack(int attack) {
+        this.attack = attack;
+    }
+
+    public int getDefense() {
+        return defense;
+    }
+
+    public void setDefense(int defense) {
+        this.defense = defense;
+    }
+
+    public int getSpecialAttack() {
+        return specialAttack;
+    }
+
+    public void setSpecialAttack(int specialAttack) {
+        this.specialAttack = specialAttack;
+    }
+
+    public int getSpecialDefense() {
+        return specialDefense;
+    }
+
+    public void setSpecialDefense(int specialDefense) {
+        this.specialDefense = specialDefense;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     @Override
     public String toString() {
         return "Pokemon{" +
-                "name='" + name + '\'' +
-                ", id=" + id +
-                ", species=" + species +
-                ", height=" + height +
-                ", weight=" + weight +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", types=" + types +
-                ", sprites=" + sprites +
+                ", hp=" + hp +
+                ", attack=" + attack +
+                ", defense=" + defense +
+                ", specialAttack=" + specialAttack +
+                ", specialDefense=" + specialDefense +
+                ", speed=" + speed +
+                ", imageUrl='" + imageUrl + '\'' +
                 '}';
     }
 }
