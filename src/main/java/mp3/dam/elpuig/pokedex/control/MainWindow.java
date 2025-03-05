@@ -6,8 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import mp3.dam.elpuig.pokedex.connection.PokeAPIConnection;
 import mp3.dam.elpuig.pokedex.model.Pokemon;
@@ -65,8 +64,12 @@ public class MainWindow {
         VBox leftPanel = new VBox(10, searchField, searchButton, pokemonList, loadAllButton, statusLabel);
         BorderPane mainLayout = new BorderPane();
         mainLayout.setLeft(leftPanel);
-        mainLayout.setCenter(resultArea);
-        mainLayout.setBottom(imageView);
+
+        // Crear una caja para las estadísticas y la imagen
+        VBox rightPanel = new VBox(10);
+        rightPanel.getChildren().addAll(imageView, resultArea);
+
+        mainLayout.setCenter(rightPanel);
 
         // Crear escena y mostrar ventana
         Scene scene = new Scene(mainLayout, 800, 600);
@@ -156,8 +159,12 @@ public class MainWindow {
             resultText.append("ID: ").append(selectedPokemon.getId()).append("\n");
             resultText.append("Nombre: ").append(selectedPokemon.getName()).append("\n");
 
-            // Mostrar los tipos del Pokémon separados por comas
-            resultText.append("Tipos: ").append(String.join(", ", selectedPokemon.getTypes())).append("\n");
+            // Mostrar los tipos del Pokémon con colores
+            resultText.append("Tipos: ");
+            for (String type : selectedPokemon.getTypes()) {
+                resultText.append(getTypeColoredText(type)).append(" ");
+            }
+            resultText.append("\n");
 
             // Mostrar las estadísticas del Pokémon
             resultText.append("HP: ").append(selectedPokemon.getHp()).append("\n");
@@ -191,4 +198,69 @@ public class MainWindow {
             }
         }
     }
+
+    private String getTypeColoredText(String type) {
+        String color;
+        switch (type.toLowerCase()) {
+            case "fire":
+                color = "red"; // Fuego
+                break;
+            case "water":
+                color = "blue"; // Agua
+                break;
+            case "grass":
+                color = "green"; // Planta
+                break;
+            case "electric":
+                color = "yellow"; // Eléctrico
+                break;
+            case "fighting":
+                color = "brown"; // Lucha
+                break;
+            case "poison":
+                color = "purple"; // Veneno
+                break;
+            case "ground":
+                color = "saddlebrown"; // Tierra
+                break;
+            case "flying":
+                color = "skyblue"; // Volador
+                break;
+            case "psychic":
+                color = "pink"; // Psíquico
+                break;
+            case "bug":
+                color = "limegreen"; // Bicho
+                break;
+            case "rock":
+                color = "gray"; // Roca
+                break;
+            case "dragon":
+                color = "darkblue"; // Dragón
+                break;
+            case "dark":
+                color = "black"; // Siniestro
+                break;
+            case "steel":
+                color = "silver"; // Acero
+                break;
+            case "fairy":
+                color = "violet"; // Hada
+                break;
+            case "ice":
+                color = "lightblue"; // Hielo
+                break;
+            case "normal":
+                color = "lightgray"; // Normal
+                break;
+            case "ghost":
+                color = "darkviolet"; // Fantasma
+                break;
+            default:
+                color = "black"; // Por defecto
+                break;
+        }
+        return String.format("<span style='color:%s;'>%s</span>", color, type);
+    }
+
 }
