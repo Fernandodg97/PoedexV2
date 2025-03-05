@@ -67,19 +67,20 @@ public class PokeAPIConnection {
 
         // Verificar el código de estado de la respuesta
         int status = connection.getResponseCode();
-
         if (status != 200) {
-            connection.disconnect();
             throw new IOException("Error al obtener la respuesta de la API. Código de estado: " + status);
         }
 
+        // Usar Scanner para leer la respuesta
         try (Scanner scanner = new Scanner(connection.getInputStream())) {
             StringBuilder response = new StringBuilder();
             while (scanner.hasNext()) {
                 response.append(scanner.nextLine());
             }
+
             return response.toString();
         } finally {
+            // Asegurarse de cerrar la conexión
             connection.disconnect();
         }
     }

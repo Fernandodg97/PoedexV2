@@ -1,150 +1,194 @@
 package mp3.dam.elpuig.pokedex.control;
 
+import javafx.concurrent.Task;
+import javafx.fxml.FXML;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import mp3.dam.elpuig.pokedex.connection.PokeAPIConnection;
 import mp3.dam.elpuig.pokedex.model.Pokemon;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainWindow {
 
-    private JFrame frame;
-    private JList<String> pokemonList;
-    private JTextArea resultArea;
-    private JLabel imageLabel;
-    private DefaultListModel<String> pokemonListModel;
-    private List<Pokemon> allPokemons = new ArrayList<>();
+    @FXML private ListView<String> pokemonList;
+    @FXML private TextArea resultArea;
+    @FXML private ImageView imageView;
+    @FXML private TextField searchField;
+    @FXML private Button loadAllButton;
+    @FXML private Label statusLabel;
 
-    public MainWindow() {
-        initialize();
+    private final List<Pokemon> allPokemons = new ArrayList<>();
+    private boolean allPokemonsLoaded = false; // Para evitar recargar
+
+    @FXML
+    public void initialize() {
+        pokemonList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> onPokemonSelected(newVal));
     }
 
-    // Método para inicializar la ventana principal
-    private void initialize() {
-        // Crear la ventana principal
-        frame = new JFrame("Pokedex");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
-        frame.setLayout(new BorderLayout());
+    public void start(Stage primaryStage) {
+        primaryStage.setTitle("Pokedex");
 
-        // Panel para contener la lista de Pokémon y la información
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout());
+        // Lista de Pokémon
+        pokemonList = new ListView<>();
+        pokemonList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> onPokemonSelected(newVal));
 
-        // Crear el modelo y la lista de Pokémon (por nombre)
-        pokemonListModel = new DefaultListModel<>();
-        pokemonList = new JList<>(pokemonListModel);
-        pokemonList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        pokemonList.addListSelectionListener(e -> onPokemonSelected());
+        // Campo de búsqueda y botón
+        searchField = new TextField();
+        Button searchButton = new Button("Buscar");
+        searchButton.setOnAction(e -> searchPokemon());
 
-        // Agregar un JScrollPane para la lista
-        JScrollPane listScrollPane = new JScrollPane(pokemonList);
-        mainPanel.add(listScrollPane, BorderLayout.WEST);
+        // Botón para cargar todos los Pokémon
+        loadAllButton = new Button("Cargar Todos");
+        loadAllButton.setOnAction(e -> loadAllPokemon());
 
-        // Crear área de texto para mostrar los resultados
-        resultArea = new JTextArea();
+        // Estado de carga
+        statusLabel = new Label("Cargando...");
+
+        // Área de información del Pokémon
+        resultArea = new TextArea();
         resultArea.setEditable(false);
-        JScrollPane resultScrollPane = new JScrollPane(resultArea);
 
-        // Etiqueta para mostrar la imagen del Pokémon
-        imageLabel = new JLabel();
-        mainPanel.add(resultScrollPane, BorderLayout.CENTER);
-        mainPanel.add(imageLabel, BorderLayout.SOUTH);
+        // Imagen del Pokémon
+        imageView = new ImageView();
+        imageView.setFitWidth(150);
+        imageView.setPreserveRatio(true);
 
-        frame.add(mainPanel, BorderLayout.CENTER);
+        // Layout principal
+        VBox leftPanel = new VBox(10, searchField, searchButton, pokemonList, loadAllButton, statusLabel);
+        BorderPane mainLayout = new BorderPane();
+        mainLayout.setLeft(leftPanel);
+        mainLayout.setCenter(resultArea);
+        mainLayout.setBottom(imageView);
 
-        // Hacer visible la ventana
-        frame.setVisible(true);
+        // Crear escena y mostrar ventana
+        Scene scene = new Scene(mainLayout, 800, 600);
+        primaryStage.setScene(scene);
+        primaryStage.show();
 
-        // Cargar la lista de todos los Pokémon
-        loadPokemonList();
+        // Cargar los 151 Pokémon de la primera generación en un hilo separado
+        loadPokemonList(151);
     }
 
-    // Método para cargar la lista de Pokémon
-    private void loadPokemonList() {
-        try {
-            // Obtener el número total de Pokémon disponibles
-            int totalPokemons = PokeAPIConnection.getTotalPokemons(); // Asume que esta función existe y devuelve el total
-
-            System.out.println("Iniciando la carga de " + totalPokemons + " Pokémon...");
-            for (int i = 1; i <= totalPokemons; i++) {
+    private void loadPokemonList(int limit) {
+        Task<Void> loadTask = new Task<>() {
+            @Override
+            protected Void call() throws IOException {
                 try {
-                    System.out.println("Intentando obtener el Pokémon con ID: " + i);
-                    Pokemon pokemon = PokeAPIConnection.getPokemonById(i); // Método para obtener Pokémon por ID
-
-                    // Imprimir el Pokémon antes de agregarlo
-                    System.out.println("Cargando Pokémon: " + pokemon.getName());
-                    System.out.println(pokemon);
-
-                    allPokemons.add(pokemon);
-                    pokemonListModel.addElement(pokemon.getName());  // Agregar el nombre del Pokémon a la lista
-                    System.out.println("Pokémon agregado correctamente: " + pokemon.getName());
-
+                    for (int i = 1; i <= limit; i++) {
+                        Pokemon pokemon = PokeAPIConnection.getPokemonById(i);
+                        allPokemons.add(pokemon);
+                        int finalI = i;
+                        javafx.application.Platform.runLater(() -> {
+                            pokemonList.getItems().add(pokemon.getId() + " " + pokemon.getName());
+                            statusLabel.setText("Cargando Pokémon... " + finalI + "/" + limit);
+                        });
+                    }
+                    javafx.application.Platform.runLater(() -> statusLabel.setText("Carga completa"));
                 } catch (IOException e) {
-                    System.out.println("Error al obtener el Pokémon con ID: " + i);  // Mejor manejo de error si algo falla
-                    e.printStackTrace();  // Imprimir detalles del error
+                    javafx.application.Platform.runLater(() -> statusLabel.setText("Error al cargar Pokémon"));
+                    e.printStackTrace();
                 }
+                return null;
             }
-            System.out.println("Carga de Pokémon completada.");
-        } catch (Exception e) {
-            System.out.println("Error general al cargar los Pokémon: " + e.getMessage());
-            e.printStackTrace();
-        }
+        };
+
+        Thread thread = new Thread(loadTask);
+        thread.setDaemon(true);
+        thread.start();
     }
 
-    // Método que se ejecuta cuando un Pokémon es seleccionado en la lista
-    private void onPokemonSelected() {
-        String selectedPokemonName = pokemonList.getSelectedValue();
-        if (selectedPokemonName != null) {
-            // Buscar el Pokémon correspondiente en la lista
-            Pokemon selectedPokemon = getPokemonByName(selectedPokemonName);
+    @FXML
+    private void loadAllPokemon() {
+        if (allPokemonsLoaded) return; // Evita recargar si ya están todos cargados
 
-            if (selectedPokemon != null) {
-                // Mostrar los detalles del Pokémon
-                StringBuilder resultText = new StringBuilder();
-                resultText.append("ID: ").append(selectedPokemon.getId()).append("\n");
-                resultText.append("Nombre: ").append(selectedPokemon.getName()).append("\n");
+        loadAllButton.setDisable(true);
+        statusLabel.setText("Cargando todos los Pokémon...");
 
-                // Mostrar los tipos del Pokémon
-                resultText.append("Tipos: ");
-                for (String type : selectedPokemon.getTypes()) {
-                    resultText.append(type).append(" ");
+        Task<Void> loadTask = new Task<>() {
+            @Override
+            protected Void call() throws IOException {
+                try {
+                    int totalPokemons = PokeAPIConnection.getTotalPokemons();
+                    for (int i = 152; i <= totalPokemons; i++) {
+                        Pokemon pokemon = PokeAPIConnection.getPokemonById(i);
+                        allPokemons.add(pokemon);
+                        int finalI = i;
+                        javafx.application.Platform.runLater(() -> {
+                            pokemonList.getItems().add(pokemon.getId() + " " + pokemon.getName());
+                            statusLabel.setText("Cargando Pokémon... " + finalI + "/" + totalPokemons);
+                        });
+                    }
+                    allPokemonsLoaded = true;
+                    javafx.application.Platform.runLater(() -> statusLabel.setText("Todos los Pokémon cargados"));
+                } catch (IOException e) {
+                    javafx.application.Platform.runLater(() -> statusLabel.setText("Error al cargar Pokémon"));
+                    e.printStackTrace();
                 }
-                resultText.append("\n");
+                return null;
+            }
+        };
 
-                // Mostrar las estadísticas del Pokémon
-                resultText.append("HP: ").append(selectedPokemon.getHp()).append("\n");
-                resultText.append("Ataque: ").append(selectedPokemon.getAttack()).append("\n");
-                resultText.append("Defensa: ").append(selectedPokemon.getDefense()).append("\n");
-                resultText.append("Ataque Especial: ").append(selectedPokemon.getSpecialAttack()).append("\n");
-                resultText.append("Defensa Especial: ").append(selectedPokemon.getSpecialDefense()).append("\n");
-                resultText.append("Velocidad: ").append(selectedPokemon.getSpeed()).append("\n");
+        Thread thread = new Thread(loadTask);
+        thread.setDaemon(true);
+        thread.start();
+    }
 
-                // Mostrar la imagen del Pokémon
-                ImageIcon pokemonImage = new ImageIcon(selectedPokemon.getImageUrl());
-                imageLabel.setIcon(pokemonImage);
+    private void onPokemonSelected(String selected) {
+        if (selected == null) return;
 
-                // Actualizar el área de texto con la información del Pokémon
-                resultArea.setText(resultText.toString());
+        int id = Integer.parseInt(selected.split(" ")[0]);
+        Pokemon selectedPokemon = allPokemons.stream()
+                .filter(p -> p.getId() == id)
+                .findFirst()
+                .orElse(null);
+
+        if (selectedPokemon != null) {
+            // Construir el texto con la información del Pokémon
+            StringBuilder resultText = new StringBuilder();
+            resultText.append("ID: ").append(selectedPokemon.getId()).append("\n");
+            resultText.append("Nombre: ").append(selectedPokemon.getName()).append("\n");
+
+            // Mostrar los tipos del Pokémon separados por comas
+            resultText.append("Tipos: ").append(String.join(", ", selectedPokemon.getTypes())).append("\n");
+
+            // Mostrar las estadísticas del Pokémon
+            resultText.append("HP: ").append(selectedPokemon.getHp()).append("\n");
+            resultText.append("Ataque: ").append(selectedPokemon.getAttack()).append("\n");
+            resultText.append("Defensa: ").append(selectedPokemon.getDefense()).append("\n");
+            resultText.append("Ataque Especial: ").append(selectedPokemon.getSpecialAttack()).append("\n");
+            resultText.append("Defensa Especial: ").append(selectedPokemon.getSpecialDefense()).append("\n");
+            resultText.append("Velocidad: ").append(selectedPokemon.getSpeed()).append("\n");
+
+            // Actualizar el área de texto en JavaFX
+            resultArea.setText(resultText.toString());
+
+            // Cargar imagen del Pokémon
+            if (selectedPokemon.getImageUrl() != null && !selectedPokemon.getImageUrl().isEmpty()) {
+                imageView.setImage(new Image(selectedPokemon.getImageUrl()));
+            } else {
+                // Imagen por defecto en caso de URL nula o vacía
+                imageView.setImage(new Image(getClass().getResource("/mp3/dam/elpuig/pokedex/fxml/images/default.png").toExternalForm()));
             }
         }
     }
 
-    // Método para buscar un Pokémon por su nombre
-    private Pokemon getPokemonByName(String name) {
-        for (Pokemon pokemon : allPokemons) {
-            if (pokemon.getName().equalsIgnoreCase(name)) {
-                return pokemon;
+    @FXML
+    private void searchPokemon() {
+        String query = searchField.getText().trim().toLowerCase();
+        for (String item : pokemonList.getItems()) {
+            if (item.toLowerCase().contains(query)) {
+                pokemonList.getSelectionModel().select(item);
+                onPokemonSelected(item);
+                break;
             }
         }
-        return null;
-    }
-
-    // Método principal para ejecutar la ventana
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(MainWindow::new);
     }
 }

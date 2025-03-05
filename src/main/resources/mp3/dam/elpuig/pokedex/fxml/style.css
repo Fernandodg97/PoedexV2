@@ -1,0 +1,45 @@
+/* Estilo general para la ventana */
+.root {
+    -fx-background-color: #f7a192;
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+}
+
+/* Estilo para el TextField */
+#searchField {
+    -fx-background-color: lightgray;
+    -fx-font-size: 14px;
+    -fx-padding: 10px;
+}
+
+/* Estilo para los botones */
+.button {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-color: lightblue;
+    -fx-padding: 10px;
+}
+
+.button:hover {
+    -fx-background-color: lightgreen;
+}
+
+/* Estilo para la lista de Pokémon */
+#pokemonList {
+    -fx-font-size: 14px;
+    -fx-background-color: #f9f9f9;
+}
+
+/* Estilo para el área de texto */
+#resultArea {
+    -fx-font-size: 14px;
+    -fx-padding: 10px;
+    -fx-background-color: #ffffff;
+}
+
+/* Estilo para la imagen */
+#imageView {
+    -fx-padding: 10px;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1px;
+}
