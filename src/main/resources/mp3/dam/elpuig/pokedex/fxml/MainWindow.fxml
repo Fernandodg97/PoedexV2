@@ -4,23 +4,22 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
-
-<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="mp3.dam.elpuig.pokedex.control.MainWindow" stylesheets="@style.css">
+
+    <top>
+        <HBox spacing="10" styleClass="search-box" alignment="CENTER" >
+            <TextField fx:id="searchField" promptText="Buscar Pokémon (Nombre en English)" styleClass="search-field" HBox.hgrow="ALWAYS"/>
+            <Button text="Buscar" onAction="#searchPokemon" styleClass="search-button"/>
+        </HBox>
+    </top>
 
     <left>
         <VBox spacing="15" styleClass="vbox-container">
             <padding>
                 <Insets top="10" right="10" bottom="10" left="10"/>
             </padding>
-
-            <!-- HBox para alinear horizontalmente el campo de búsqueda y el botón -->
-            <HBox spacing="10" styleClass="search-box">
-                <TextField fx:id="searchField" promptText="Buscar Pokémon (Nombre en English)" styleClass="search-field"/>
-                <Button text="Buscar" onAction="#searchPokemon" styleClass="search-button"/>
-            </HBox>
 
             <ListView fx:id="pokemonList" styleClass="pokemon-list"/>
             <Button fx:id="loadAllButton" text="Cargar Todos" onAction="#loadAllPokemon" styleClass="load-all-button"/>
@@ -30,10 +29,14 @@
 
     <center>
         <VBox styleClass="my-vbox">
-            <ImageView fx:id="imageView" fitWidth="300" preserveRatio="true" styleClass="image-view"/>
+            <!-- Aquí modificamos para que el nombre esté sobre la imagen -->
+            <VBox alignment="CENTER" spacing="5" styleClass="pokemon-info">
+                <Label fx:id="pokemonNameLabel" styleClass="pokemon-name"/>
+                <Label fx:id="pokemonIdLabel" styleClass="pokemon-id"/>
+                <ImageView fx:id="imageView" fitWidth="300" preserveRatio="true" styleClass="image-view"/>
+            </VBox>
             <TextArea fx:id="resultArea" editable="false" styleClass="result-area"/>
 
-            <!-- HBox para los botones de navegación -->
             <HBox spacing="10" alignment="center" styleClass="navigation-buttons">
                 <Button fx:id="prevButton" text="Anterior" onAction="#previousPokemon" styleClass="navigation-button"/>
                 <Button fx:id="nextButton" text="Siguiente" onAction="#nextPokemon" styleClass="navigation-button"/>

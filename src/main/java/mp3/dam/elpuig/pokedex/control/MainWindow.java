@@ -23,6 +23,8 @@ import java.util.List;
 
 public class MainWindow implements Initializable {
 
+    public Label pokemonNameLabel;
+    public Label pokemonIdLabel;
     private Scene scene;
     private Stage stage;
 
@@ -75,7 +77,9 @@ public class MainWindow implements Initializable {
                         allPokemons.add(pokemon);
                         int finalI = i;
                         javafx.application.Platform.runLater(() -> {
-                            pokemonList.getItems().add(pokemon.getId() + " " + pokemon.getName());
+                            // Formatear el ID a tres dígitos (001, 002, ...)
+                            String formattedId = String.format("%03d", pokemon.getId());
+                            pokemonList.getItems().add(formattedId + " - " + pokemon.getName());
                             statusLabel.setText("Cargando Pokémon... " + finalI + "/" + limit);
 
                             // Seleccionar el primer Pokémon y mostrar sus datos
@@ -98,6 +102,7 @@ public class MainWindow implements Initializable {
         thread.setDaemon(true);
         thread.start();
     }
+
 
 
     @FXML
@@ -152,8 +157,7 @@ public class MainWindow implements Initializable {
 
     private void showPokemonInfo(Pokemon pokemon) {
         StringBuilder resultText = new StringBuilder();
-        resultText.append("ID: ").append(pokemon.getId()).append("\n");
-        resultText.append("Nombre: ").append(pokemon.getName()).append("\n");
+
 
         // Mostrar los tipos
         resultText.append("Tipos: ");
@@ -173,6 +177,17 @@ public class MainWindow implements Initializable {
 
         resultArea.setText(resultText.toString());
 
+        // Cambiar el texto del nombre y el ID
+        Label nameLabel = (Label) scene.lookup("#pokemonNameLabel");
+        Label idLabel = (Label) scene.lookup("#pokemonIdLabel");
+
+        if (nameLabel != null) {
+            nameLabel.setText(pokemon.getName());
+        }
+        if (idLabel != null) {
+            idLabel.setText(String.format("%03d", pokemon.getId()));  // ID formateado como 001, 002, ...
+        }
+
         // Cargar imagen
         if (pokemon.getImageUrl() != null && !pokemon.getImageUrl().isEmpty()) {
             imageView.setImage(new Image(pokemon.getImageUrl()));
@@ -180,6 +195,7 @@ public class MainWindow implements Initializable {
             imageView.setImage(new Image(getClass().getResource("/mp3/dam/elpuig/pokedex/fxml/images/default.png").toExternalForm()));
         }
     }
+
 
     @FXML
     private void searchPokemon() {

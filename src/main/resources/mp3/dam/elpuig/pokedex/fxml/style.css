@@ -5,14 +5,11 @@
     -fx-font-size: 14px;
 }
 
-/* Estilo para el VBox de contenedor */
-.vbox-container {
-    -fx-background-color: #f7a192;
-}
-
 /* Estilo para el HBox de búsqueda */
 .search-box {
     -fx-spacing: 10px;
+    -fx-background-color: #f7a192;
+    -fx-padding: 10px;
 }
 
 /* Estilo para el TextField de búsqueda */
@@ -20,6 +17,7 @@
     -fx-background-color: lightgray;
     -fx-font-size: 14px;
     -fx-padding: 10px;
+    -fx-pref-width: 100%; /* Esto asegura que ocupe todo el espacio disponible */
 }
 
 /* Estilo para los botones */
@@ -38,6 +36,25 @@
 .pokemon-list {
     -fx-font-size: 14px;
     -fx-background-color: #f9f9f9;
+}
+
+/* Estilo para el nombre del Pokémon */
+.pokemon-name {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+}
+
+/* Estilo para el ID del Pokémon */
+.pokemon-id {
+    -fx-font-size: 16px;
+    -fx-text-fill: gray;
+}
+
+/* Estilo para la estructura del VBox que contiene la imagen y el nombre */
+.pokemon-info {
+    -fx-alignment: center;
+    -fx-spacing: 10px;
 }
 
 /* Estilo para el área de texto */
