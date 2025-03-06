@@ -151,6 +151,10 @@ public class MainWindow implements Initializable {
                 .orElse(null);
 
         if (selectedPokemon != null) {
+            // **Actualizar el índice actual basado en la selección**
+            currentIndex = allPokemons.indexOf(selectedPokemon);
+
+            // Mostrar la información del Pokémon
             showPokemonInfo(selectedPokemon);
         }
     }
