@@ -95,6 +95,9 @@ public class PokeAPIConnection {
         // Aquí deserializamos la respuesta en un Map o una clase que contenga todos los datos necesarios.
         PokemonData data = objectMapper.readValue(response, PokemonData.class);
 
+        //System.out.println("Deserializar el JSON en un objeto Pokemon: " + data);
+        //System.out.println("############################FIN #######################");
+
         // Crear el objeto Pokémon y asignar los valores
         Pokemon pokemon = new Pokemon();
         pokemon.setId(data.getId());
@@ -116,6 +119,26 @@ public class PokeAPIConnection {
 
         // Asignar la imagen
         pokemon.setImageUrl(data.getSprites().getFrontDefault());
+
+        // Verificar y asignar la imagen con manejo de excepciones
+        try {
+            Sprites sprites = data.getSprites();
+            //System.out.println("Sprites: " + sprites);
+            if (sprites != null) {
+                if (sprites.getFrontDefault() != null && !sprites.getFrontDefault().isEmpty()) {
+                    pokemon.setImageUrl(sprites.getFrontDefault());
+                } else if (sprites.getFrontShiny() != null && !sprites.getFrontShiny().isEmpty()) {
+                    pokemon.setImageUrl(sprites.getFrontShiny());
+                } else {
+                    System.out.println("No se ha encontrado una imagen predeterminada ni shiny para el Pokémon: " + pokemon.getName());
+                }
+            } else {
+                System.out.println("Los datos de sprites son nulos para el Pokémon: " + pokemon.getName());
+            }
+        } catch (Exception e) {
+            System.err.println("Error al intentar asignar la imagen para el Pokémon: " + pokemon.getName());
+            e.printStackTrace();
+        }
 
         return pokemon;
     }

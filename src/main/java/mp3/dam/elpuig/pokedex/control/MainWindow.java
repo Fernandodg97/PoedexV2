@@ -8,79 +8,64 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.event.ActionEvent;
+import javafx.fxml.Initializable;
 import mp3.dam.elpuig.pokedex.connection.PokeAPIConnection;
 import mp3.dam.elpuig.pokedex.model.Pokemon;
+
+import java.net.URL;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainWindow {
+public class MainWindow implements Initializable {
 
-    @FXML private ListView<String> pokemonList;
-    @FXML private TextArea resultArea;
-    @FXML private ImageView imageView;
-    @FXML private TextField searchField;
-    @FXML private Button loadAllButton;
-    @FXML private Label statusLabel;
-
-    private final List<Pokemon> allPokemons = new ArrayList<>();
-    private boolean allPokemonsLoaded = false; // Para evitar recargar
+    private Scene scene;
+    private Stage stage;
 
     @FXML
-    public void initialize() {
+    private ListView<String> pokemonList;
+    @FXML
+    private TextArea resultArea;
+    @FXML
+    private ImageView imageView;
+    @FXML
+    private TextField searchField;
+    @FXML
+    private Button loadAllButton;
+    @FXML
+    private Label statusLabel;
+    @FXML
+    private Button prevButton;  // Botón de "Anterior"
+    @FXML
+    private Button nextButton;  // Botón de "Siguiente"
+
+    private final List<Pokemon> allPokemons = new ArrayList<>();
+    private boolean allPokemonsLoaded = false;
+
+    private int currentIndex = 0;  // Índice para navegación
+
+    public MainWindow() {}
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        System.out.println("Iniciando...");
         pokemonList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> onPokemonSelected(newVal));
     }
 
-    public void start(Stage primaryStage) {
-        primaryStage.setTitle("Pokedex");
-
-        // Lista de Pokémon
-        pokemonList = new ListView<>();
-        pokemonList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> onPokemonSelected(newVal));
-
-        // Campo de búsqueda y botón
-        searchField = new TextField();
-        Button searchButton = new Button("Buscar");
-        searchButton.setOnAction(e -> searchPokemon());
-
-        // Botón para cargar todos los Pokémon
-        loadAllButton = new Button("Cargar Todos");
-        loadAllButton.setOnAction(e -> loadAllPokemon());
-
-        // Estado de carga
-        statusLabel = new Label("Cargando...");
-
-        // Área de información del Pokémon
-        resultArea = new TextArea();
-        resultArea.setEditable(false);
-
-        // Imagen del Pokémon
-        imageView = new ImageView();
-        imageView.setFitWidth(150);
-        imageView.setPreserveRatio(true);
-
-        // Layout principal
-        VBox leftPanel = new VBox(10, searchField, searchButton, pokemonList, loadAllButton, statusLabel);
-        BorderPane mainLayout = new BorderPane();
-        mainLayout.setLeft(leftPanel);
-
-        // Crear una caja para las estadísticas y la imagen
-        VBox rightPanel = new VBox(10);
-        rightPanel.getChildren().addAll(imageView, resultArea);
-
-        mainLayout.setCenter(rightPanel);
-
-        // Crear escena y mostrar ventana
-        Scene scene = new Scene(mainLayout, 800, 600);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
-        // Cargar los 151 Pokémon de la primera generación en un hilo separado
-        loadPokemonList(151);
+    public void setStage(Stage primaryStage) {
+        stage = primaryStage;
     }
 
-    private void loadPokemonList(int limit) {
+    public void setScene(Scene scene) {
+        this.scene = scene;
+    }
+
+    public void loadPokemonList(int limit) {
+        System.out.println("Cargando 151 pokemons");
         Task<Void> loadTask = new Task<>() {
             @Override
             protected Void call() throws IOException {
@@ -110,7 +95,7 @@ public class MainWindow {
 
     @FXML
     private void loadAllPokemon() {
-        if (allPokemonsLoaded) return; // Evita recargar si ya están todos cargados
+        if (allPokemonsLoaded) return;
 
         loadAllButton.setDisable(true);
         statusLabel.setText("Cargando todos los Pokémon...");
@@ -154,36 +139,38 @@ public class MainWindow {
                 .orElse(null);
 
         if (selectedPokemon != null) {
-            // Construir el texto con la información del Pokémon
-            StringBuilder resultText = new StringBuilder();
-            resultText.append("ID: ").append(selectedPokemon.getId()).append("\n");
-            resultText.append("Nombre: ").append(selectedPokemon.getName()).append("\n");
+            showPokemonInfo(selectedPokemon);
+        }
+    }
 
-            // Mostrar los tipos del Pokémon con colores
-            resultText.append("Tipos: ");
-            for (String type : selectedPokemon.getTypes()) {
-                resultText.append(getTypeColoredText(type)).append(" ");
-            }
-            resultText.append("\n");
+    private void showPokemonInfo(Pokemon pokemon) {
+        StringBuilder resultText = new StringBuilder();
+        resultText.append("ID: ").append(pokemon.getId()).append("\n");
+        resultText.append("Nombre: ").append(pokemon.getName()).append("\n");
 
-            // Mostrar las estadísticas del Pokémon
-            resultText.append("HP: ").append(selectedPokemon.getHp()).append("\n");
-            resultText.append("Ataque: ").append(selectedPokemon.getAttack()).append("\n");
-            resultText.append("Defensa: ").append(selectedPokemon.getDefense()).append("\n");
-            resultText.append("Ataque Especial: ").append(selectedPokemon.getSpecialAttack()).append("\n");
-            resultText.append("Defensa Especial: ").append(selectedPokemon.getSpecialDefense()).append("\n");
-            resultText.append("Velocidad: ").append(selectedPokemon.getSpeed()).append("\n");
+        // Mostrar los tipos
+        resultText.append("Tipos: ");
+        for (int i = 0; i < pokemon.getTypes().size(); i++) {
+            resultText.append(pokemon.getTypes().get(i));
+            if (i < pokemon.getTypes().size() - 1) resultText.append(", ");
+        }
+        resultText.append("\n");
 
-            // Actualizar el área de texto en JavaFX
-            resultArea.setText(resultText.toString());
+        // Mostrar estadísticas
+        resultText.append("HP: ").append(pokemon.getHp()).append("\n");
+        resultText.append("Ataque: ").append(pokemon.getAttack()).append("\n");
+        resultText.append("Defensa: ").append(pokemon.getDefense()).append("\n");
+        resultText.append("Ataque Especial: ").append(pokemon.getSpecialAttack()).append("\n");
+        resultText.append("Defensa Especial: ").append(pokemon.getSpecialDefense()).append("\n");
+        resultText.append("Velocidad: ").append(pokemon.getSpeed()).append("\n");
 
-            // Cargar imagen del Pokémon
-            if (selectedPokemon.getImageUrl() != null && !selectedPokemon.getImageUrl().isEmpty()) {
-                imageView.setImage(new Image(selectedPokemon.getImageUrl()));
-            } else {
-                // Imagen por defecto en caso de URL nula o vacía
-                imageView.setImage(new Image(getClass().getResource("/mp3/dam/elpuig/pokedex/fxml/images/default.png").toExternalForm()));
-            }
+        resultArea.setText(resultText.toString());
+
+        // Cargar imagen
+        if (pokemon.getImageUrl() != null && !pokemon.getImageUrl().isEmpty()) {
+            imageView.setImage(new Image(pokemon.getImageUrl()));
+        } else {
+            imageView.setImage(new Image(getClass().getResource("/mp3/dam/elpuig/pokedex/fxml/images/default.png").toExternalForm()));
         }
     }
 
@@ -199,68 +186,21 @@ public class MainWindow {
         }
     }
 
-    private String getTypeColoredText(String type) {
-        String color;
-        switch (type.toLowerCase()) {
-            case "fire":
-                color = "red"; // Fuego
-                break;
-            case "water":
-                color = "blue"; // Agua
-                break;
-            case "grass":
-                color = "green"; // Planta
-                break;
-            case "electric":
-                color = "yellow"; // Eléctrico
-                break;
-            case "fighting":
-                color = "brown"; // Lucha
-                break;
-            case "poison":
-                color = "purple"; // Veneno
-                break;
-            case "ground":
-                color = "saddlebrown"; // Tierra
-                break;
-            case "flying":
-                color = "skyblue"; // Volador
-                break;
-            case "psychic":
-                color = "pink"; // Psíquico
-                break;
-            case "bug":
-                color = "limegreen"; // Bicho
-                break;
-            case "rock":
-                color = "gray"; // Roca
-                break;
-            case "dragon":
-                color = "darkblue"; // Dragón
-                break;
-            case "dark":
-                color = "black"; // Siniestro
-                break;
-            case "steel":
-                color = "silver"; // Acero
-                break;
-            case "fairy":
-                color = "violet"; // Hada
-                break;
-            case "ice":
-                color = "lightblue"; // Hielo
-                break;
-            case "normal":
-                color = "lightgray"; // Normal
-                break;
-            case "ghost":
-                color = "darkviolet"; // Fantasma
-                break;
-            default:
-                color = "black"; // Por defecto
-                break;
+    // Método para el botón Anterior
+    @FXML
+    public void previousPokemon() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            showPokemonInfo(allPokemons.get(currentIndex));
         }
-        return String.format("<span style='color:%s;'>%s</span>", color, type);
     }
 
+    // Método para el botón Siguiente
+    @FXML
+    public void nextPokemon() {
+        if (currentIndex < allPokemons.size() - 1) {
+            currentIndex++;
+            showPokemonInfo(allPokemons.get(currentIndex));
+        }
+    }
 }

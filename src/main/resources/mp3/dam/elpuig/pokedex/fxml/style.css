@@ -5,41 +5,170 @@
     -fx-font-size: 14px;
 }
 
-/* Estilo para el TextField */
-#searchField {
+/* Estilo para el VBox de contenedor */
+.vbox-container {
+    -fx-background-color: #f7a192;
+}
+
+/* Estilo para el HBox de búsqueda */
+.search-box {
+    -fx-spacing: 10px;
+}
+
+/* Estilo para el TextField de búsqueda */
+.search-field {
     -fx-background-color: lightgray;
     -fx-font-size: 14px;
     -fx-padding: 10px;
 }
 
 /* Estilo para los botones */
-.button {
+.search-button {
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-background-color: lightblue;
     -fx-padding: 10px;
 }
 
-.button:hover {
+.search-button:hover {
     -fx-background-color: lightgreen;
 }
 
 /* Estilo para la lista de Pokémon */
-#pokemonList {
+.pokemon-list {
     -fx-font-size: 14px;
     -fx-background-color: #f9f9f9;
 }
 
 /* Estilo para el área de texto */
-#resultArea {
+.result-area {
     -fx-font-size: 14px;
     -fx-padding: 10px;
     -fx-background-color: #ffffff;
+    -fx-pref-height: 220px;
 }
 
 /* Estilo para la imagen */
-#imageView {
+.image-view {
     -fx-padding: 10px;
     -fx-border-color: #cccccc;
     -fx-border-width: 1px;
+    -fx-alignment: center;
+}
+
+/* Estilo para la vbox personalizada */
+.my-vbox {
+    -fx-background-radius: 10px;
+    -fx-margin-right: 20px;
+    -fx-margin-left: 20px;
+    -fx-margin-top: 20px;
+    -fx-margin-bottom: 20px;
+    -fx-alignment: center;
+}
+
+/* Estilo para el área de carga */
+.load-all-button {
+    -fx-font-size: 14px;
+    -fx-background-color: lightgreen;
+    -fx-padding: 10px;
+}
+
+/* Estilo para el label de estado */
+.status-label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+/* Estilos específicos para los tipos de Pokémon */
+.fire {
+    -fx-background-color: red;
+}
+
+.water {
+    -fx-background-color: blue;
+}
+
+.grass {
+    -fx-background-color: green;
+}
+
+.electric {
+    -fx-background-color: yellow;
+    -fx-text-fill: black;
+}
+
+.fighting {
+    -fx-background-color: brown;
+}
+
+.poison {
+    -fx-background-color: purple;
+}
+
+.ground {
+    -fx-background-color: saddlebrown;
+}
+
+.flying {
+    -fx-background-color: skyblue;
+}
+
+.psychic {
+    -fx-background-color: pink;
+    -fx-text-fill: black;
+}
+
+.bug {
+    -fx-background-color: limegreen;
+}
+
+.rock {
+    -fx-background-color: gray;
+}
+
+.dragon {
+    -fx-background-color: darkblue;
+}
+
+.dark {
+    -fx-background-color: black;
+    -fx-text-fill: white;
+}
+
+.steel {
+    -fx-background-color: silver;
+}
+
+.fairy {
+    -fx-background-color: violet;
+}
+
+.ice {
+    -fx-background-color: lightblue;
+}
+
+.normal {
+    -fx-background-color: lightgray;
+}
+
+.ghost {
+    -fx-background-color: darkviolet;
+}
+
+/* Estilo para los botones de navegación (Anterior y Siguiente) */
+.navigation-buttons {
+    -fx-spacing: 10px;
+    -fx-padding: 10px;
+    -fx-alignment: center;
+}
+
+.navigation-button {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-color: lightblue;
+    -fx-padding: 10px;
+}
+
+.navigation-button:hover {
+    -fx-background-color: lightgreen;
 }

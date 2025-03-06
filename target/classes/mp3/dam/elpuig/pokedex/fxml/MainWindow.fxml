@@ -3,29 +3,41 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.Scene?>
-<?import javafx.stage.Stage?>
+<?import javafx.scene.layout.HBox?>
 
 <?import java.net.URL?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="mp3.dam.elpuig.pokedex.control.MainWindow">
-    <stylesheets>
-        <URL value="@style.css" />
-    </stylesheets>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="mp3.dam.elpuig.pokedex.control.MainWindow" stylesheets="@style.css">
+
     <left>
-        <VBox spacing="15" padding="10">
-            <TextField fx:id="searchField" promptText="Buscar Pokémon" style="-fx-font-size: 14px; -fx-background-color: lightgray;" />
-            <Button text="Buscar" onAction="#searchPokemon" style="-fx-font-size: 14px; -fx-background-color: lightblue;" />
-            <ListView fx:id="pokemonList" style="-fx-font-size: 14px;" />
-            <Button text="Cargar Todos" onAction="#loadAllPokemon" style="-fx-font-size: 14px; -fx-background-color: lightgreen;" />
-            <Label fx:id="statusLabel" text="Cargando..." style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+        <VBox spacing="15" styleClass="vbox-container">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+
+            <!-- HBox para alinear horizontalmente el campo de búsqueda y el botón -->
+            <HBox spacing="10" styleClass="search-box">
+                <TextField fx:id="searchField" promptText="Buscar Pokémon (Nombre en English)" styleClass="search-field"/>
+                <Button text="Buscar" onAction="#searchPokemon" styleClass="search-button"/>
+            </HBox>
+
+            <ListView fx:id="pokemonList" styleClass="pokemon-list"/>
+            <Button fx:id="loadAllButton" text="Cargar Todos" onAction="#loadAllPokemon" styleClass="load-all-button"/>
+            <Label fx:id="statusLabel" text="Cargando..." styleClass="status-label"/>
         </VBox>
     </left>
 
     <center>
-        <TextArea fx:id="resultArea" editable="false" style="-fx-font-size: 14px; -fx-padding: 10px;" />
-    </center>
+        <VBox styleClass="my-vbox">
+            <ImageView fx:id="imageView" fitWidth="300" preserveRatio="true" styleClass="image-view"/>
+            <TextArea fx:id="resultArea" editable="false" styleClass="result-area"/>
 
-    <bottom>
-        <ImageView fx:id="imageView" fitWidth="150" preserveRatio="true" />
-    </bottom>
+            <!-- HBox para los botones de navegación -->
+            <HBox spacing="10" alignment="center" styleClass="navigation-buttons">
+                <Button fx:id="prevButton" text="Anterior" onAction="#previousPokemon" styleClass="navigation-button"/>
+                <Button fx:id="nextButton" text="Siguiente" onAction="#nextPokemon" styleClass="navigation-button"/>
+            </HBox>
+        </VBox>
+    </center>
 </BorderPane>
