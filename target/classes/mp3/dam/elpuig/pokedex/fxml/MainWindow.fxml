@@ -1,46 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="mp3.dam.elpuig.pokedex.control.MainWindow" stylesheets="@style.css">
+<!--
+    Definición del layout principal usando BorderPane.
+    Se divide en cinco regiones: top (superior), left (izquierda), center (centro),
+    right (derecha, aunque no se usa aquí) y bottom (inferior, tampoco se usa).
+-->
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="mp3.dam.elpuig.pokedex.control.MainWindow"
+            stylesheets="@style.css">
 
+    <!-- ============================= -->
+    <!--      BARRA DE BÚSQUEDA        -->
+    <!-- ============================= -->
     <top>
-        <HBox spacing="10" styleClass="search-box" alignment="CENTER" >
-            <TextField fx:id="searchField" promptText="Buscar Pokémon (Nombre en English)" styleClass="search-field" HBox.hgrow="ALWAYS"/>
+        <HBox spacing="10" alignment="CENTER" styleClass="search-box">
+            <!-- Campo de texto para buscar un Pokémon por su nombre en inglés -->
+            <TextField fx:id="searchField" promptText="Buscar Pokémon (Nombre en English)"
+                       styleClass="search-field" HBox.hgrow="ALWAYS"/>
+            <!-- Botón para iniciar la búsqueda -->
             <Button text="Buscar" onAction="#searchPokemon" styleClass="search-button"/>
         </HBox>
     </top>
 
+    <!-- ============================= -->
+    <!--        PANEL IZQUIERDO        -->
+    <!-- ============================= -->
     <left>
         <VBox spacing="15" styleClass="vbox-container">
+            <!-- Añade un margen interno para mejorar la distribución de los elementos -->
             <padding>
                 <Insets top="10" right="10" bottom="10" left="10"/>
             </padding>
 
+            <!-- Lista donde se mostrarán los Pokémon disponibles -->
             <ListView fx:id="pokemonList" styleClass="pokemon-list"/>
+
+            <!-- Botón para cargar la lista completa de Pokémon -->
             <Button fx:id="loadAllButton" text="Cargar Todos" onAction="#loadAllPokemon" styleClass="load-all-button"/>
+
+            <!-- Etiqueta para mostrar el estado de carga de los datos -->
             <Label fx:id="statusLabel" text="Cargando..." styleClass="status-label"/>
         </VBox>
     </left>
 
+    <!-- ============================= -->
+    <!--        PANEL CENTRAL          -->
+    <!-- ============================= -->
     <center>
         <VBox styleClass="my-vbox">
-            <!-- Aquí modificamos para que el nombre esté sobre la imagen -->
+
+            <!-- Contenedor de información del Pokémon -->
             <VBox alignment="CENTER" spacing="5" styleClass="pokemon-info">
+                <!-- Etiqueta para mostrar el nombre del Pokémon -->
                 <Label fx:id="pokemonNameLabel" styleClass="pokemon-name"/>
+                <!-- Etiqueta para mostrar el ID del Pokémon -->
                 <Label fx:id="pokemonIdLabel" styleClass="pokemon-id"/>
+                <!-- Imagen del Pokémon -->
                 <ImageView fx:id="imageView" fitWidth="300" preserveRatio="true" styleClass="image-view"/>
             </VBox>
+
+            <!-- Área de texto para mostrar detalles adicionales sobre el Pokémon -->
             <TextArea fx:id="resultArea" editable="false" styleClass="result-area"/>
 
-            <HBox spacing="10" alignment="center" styleClass="navigation-buttons">
+            <!-- Botones de navegación para moverse entre Pokémon -->
+            <HBox spacing="10" alignment="CENTER" styleClass="navigation-buttons">
                 <Button fx:id="prevButton" text="Anterior" onAction="#previousPokemon" styleClass="navigation-button"/>
                 <Button fx:id="nextButton" text="Siguiente" onAction="#nextPokemon" styleClass="navigation-button"/>
             </HBox>
         </VBox>
     </center>
+
 </BorderPane>

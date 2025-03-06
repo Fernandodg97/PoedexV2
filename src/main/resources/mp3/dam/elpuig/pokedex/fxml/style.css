@@ -1,4 +1,8 @@
-/* Estilo general para la ventana */
+/* =========================== */
+/*          ESTILOS BASE       */
+/* =========================== */
+
+/* Fondo general y configuración básica */
 .root {
     -fx-background-color: #f7a192;
     -fx-font-family: "Arial";
@@ -7,22 +11,30 @@
     -fx-min-height: 768px;
 }
 
-/* Estilo para el HBox de búsqueda */
+/* =========================== */
+/*       BARRA DE BÚSQUEDA     */
+/* =========================== */
+
+/* Contenedor de la barra de búsqueda */
 .search-box {
     -fx-spacing: 10px;
     -fx-background-color: #f7a192;
     -fx-padding: 10px;
 }
 
-/* Estilo para el TextField de búsqueda */
+/* Campo de texto para búsqueda */
 .search-field {
     -fx-background-color: lightgray;
     -fx-font-size: 14px;
     -fx-padding: 10px;
-    -fx-pref-width: 100%; /* Esto asegura que ocupe todo el espacio disponible */
+    -fx-pref-width: 100%; /* Ocupar todo el espacio disponible */
 }
 
-/* Estilo para los botones */
+/* =========================== */
+/*          BOTONES            */
+/* =========================== */
+
+/* Estilo base para los botones */
 .search-button, .navigation-button, .load-all-button {
     -fx-font-size: 14px;
     -fx-font-weight: bold;
@@ -30,100 +42,124 @@
     -fx-background-color: lightblue;
 }
 
+/* Efecto hover para botones */
 .search-button:hover, .navigation-button:hover {
     -fx-background-color: lightgreen;
 }
 
+/* Color específico del botón "Cargar Todos" */
 .load-all-button {
     -fx-background-color: lightgreen;
 }
 
-/* Estilo para los botones de navegación (Anterior y Siguiente) */
+/* =========================== */
+/*     NAVEGACIÓN Y LISTA      */
+/* =========================== */
+
+/* Contenedor de los botones de navegación */
 .navigation-buttons {
     -fx-spacing: 10px;
     -fx-padding: 10px;
     -fx-alignment: center;
 }
 
-/* Estilo para la lista de Pokémon */
+/* Lista de Pokémon */
 .pokemon-list {
     -fx-font-size: 14px;
     -fx-background-color: #f9f9f9;
 }
 
-/* Estilo para el área de carga */
+/* =========================== */
+/*        ÁREA DE ESTADO       */
+/* =========================== */
+
+/* Mensaje de estado (cargando, error, etc.) */
 .status-label {
     -fx-font-size: 16px;
     -fx-font-weight: bold;
 }
 
-/* Estilos para el área de texto (resultados) */
+/* =========================== */
+/*   INFORMACIÓN DEL POKÉMON   */
+/* =========================== */
+
+/* Área de texto con información */
 .result-area {
     -fx-font-size: 14px;
     -fx-padding: 10px;
     -fx-background-color: #ffffff;
     -fx-pref-height: 220px;
-    -fx-pref-width: 300px; /* Ancho fijo para la zona de texto */
+    -fx-pref-width: 300px; /* Tamaño fijo para una visualización uniforme */
 }
 
-/* Estilo para el nombre del Pokémon */
+/* Nombre del Pokémon */
 .pokemon-name {
     -fx-font-size: 20px;
     -fx-font-weight: bold;
     -fx-text-fill: black;
 }
 
-/* Estilo para el ID del Pokémon */
+/* ID del Pokémon */
 .pokemon-id {
     -fx-font-size: 16px;
     -fx-text-fill: gray;
 }
 
-/* Estilo para la imagen */
+/* Imagen del Pokémon */
 .image-view {
     -fx-padding: 10px;
     -fx-border-color: #cccccc;
     -fx-border-width: 1px;
-    -fx-alignment: center;
 }
 
-/* Estilo para la vbox personalizada */
+/* =========================== */
+/*       CONTENEDORES          */
+/* =========================== */
+
+/* Contenedor principal de información del Pokémon */
 .my-vbox {
     -fx-background-radius: 10px;
-    -fx-margin: 20px;
     -fx-alignment: center;
-}
-
-/* Estilo para la estructura del HBox que contiene la imagen y los detalles */
-.my-hbox {
-    -fx-alignment: center;
-    -fx-spacing: 20px; /* Espacio entre la imagen y los detalles */
     -fx-padding: 20px;
 }
 
-/* Estilo para el VBox que contiene los detalles del Pokémon */
+/* Contenedor para imagen y detalles */
+.my-hbox {
+    -fx-alignment: center;
+    -fx-spacing: 20px; /* Espaciado entre la imagen y los detalles */
+    -fx-padding: 20px;
+}
+
+/* Contenedor de detalles del Pokémon */
 .pokemon-details {
-    -fx-alignment: top-left; /* Alineación de los detalles a la izquierda */
+    -fx-alignment: top-left;
     -fx-spacing: 10px;
-    -fx-pref-width: 300px; /* Ancho fijo para los detalles */
+    -fx-pref-width: 300px; /* Tamaño fijo para mantener consistencia */
 }
 
-/* Estilos específicos para los tipos de Pokémon */
-.fire, .water, .grass, .electric, .fighting, .poison, .ground, .flying, .psychic, .bug, .rock, .dragon, .dark, .steel, .fairy, .ice, .normal, .ghost {
+/* =========================== */
+/*   ESTILOS PARA LOS TIPOS    */
+/* =========================== */
+
+.fire, .water, .grass, .electric, .fighting, .poison, .ground, .flying,
+.psychic, .bug, .rock, .dragon, .dark, .steel, .fairy, .ice, .normal, .ghost {
     -fx-text-fill: white;
+    -fx-padding: 5px;
+    -fx-border-radius: 5px;
 }
 
+/* Colores específicos por tipo */
 .fire { -fx-background-color: red; }
 .water { -fx-background-color: blue; }
 .grass { -fx-background-color: green; }
-.electric { -fx-background-color: yellow; -fx-text-fill: black; }
+.electric { -fx-background-color: gold; -fx-text-fill: black; } /* Mejor visibilidad */
 .fighting { -fx-background-color: brown; }
 .poison { -fx-background-color: purple; }
 .ground { -fx-background-color: saddlebrown; }
 .flying { -fx-background-color: skyblue; }
 .psychic { -fx-background-color: pink; }
 .bug { -fx-background-color: limegreen; }
-.rock { -fx-background-color: gray; }
+.rock { -fx-background-color: dimgray; } /* Más contraste */
 .dragon { -fx-background-color: darkblue; }
 .dark { -fx-background-color: black; }
 .steel { -fx-background-color: silver; }
