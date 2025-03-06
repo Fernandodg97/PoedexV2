@@ -77,6 +77,12 @@ public class MainWindow implements Initializable {
                         javafx.application.Platform.runLater(() -> {
                             pokemonList.getItems().add(pokemon.getId() + " " + pokemon.getName());
                             statusLabel.setText("Cargando Pokémon... " + finalI + "/" + limit);
+
+                            // Seleccionar el primer Pokémon y mostrar sus datos
+                            if (finalI == 1) {
+                                pokemonList.getSelectionModel().selectFirst();
+                                onPokemonSelected(pokemonList.getSelectionModel().getSelectedItem());
+                            }
                         });
                     }
                     javafx.application.Platform.runLater(() -> statusLabel.setText("Carga completa"));
@@ -92,6 +98,7 @@ public class MainWindow implements Initializable {
         thread.setDaemon(true);
         thread.start();
     }
+
 
     @FXML
     private void loadAllPokemon() {
