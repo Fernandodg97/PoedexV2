@@ -1,5 +1,9 @@
 # Pokedex
 
+<p align="center">
+  <img src="src/DemoPCPokedex.gif" alt="Demostración de Pokedex" width="70%">
+</p>
+
 [![Java](https://img.shields.io/badge/Java_21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://openjdk.org/)
 [![JavaFX](https://img.shields.io/badge/JavaFX_21-007396?style=for-the-badge&logo=java&logoColor=white)](https://openjfx.io/)
 [![Maven](https://img.shields.io/badge/Maven-C71A36?style=for-the-badge&logo=apache-maven&logoColor=white)](https://maven.apache.org/)
